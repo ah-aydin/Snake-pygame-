@@ -95,7 +95,7 @@ def check_collision():
         if cube == head: continue
         if head.pos == cube.pos:
             pygame.quit()
-            messagebox.showinfo("GAME OVER", "GAME OVEnTotal score: BANANAS")
+            messagebox.showinfo("GAME OVER", "GAME OVER\nTotal score: BANANAS")
             exit()
 
 def check_snack_collision():
