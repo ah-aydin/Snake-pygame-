@@ -1,5 +1,7 @@
+
+
 import pygame
-from color import GREEN
+from color import GREEN, BLUE
 
 # Enviroment variables
 global top_offset
@@ -32,8 +34,21 @@ class Cube():
         elif self.pos[1] >= size-dist+top_offset and self.ydir == 1: self.pos = (self.pos[0], top_offset) # Y border bottom
         else: self.pos = (self.pos[0] + self.xdir * dist, self.pos[1] + self.ydir * dist)
 
-    def draw(self, surface):
+    def draw(self, surface, eyes):
         pygame.draw.rect(surface, self.color, (self.pos[0]+2, self.pos[1]+2, dist-3, dist-3))
+        # Draw the eyes
+        if eyes == True:
+            var = dist // 2
+            center = (self.pos[0] + var, self.pos[1] + var)
+            radius = dist // 8
+            dist_btw_eyes = var*3//8
+            dist_center = var*3//4
+            loc1 = (center[0] + dist_btw_eyes*self.ydir + dist_center*self.xdir, 
+                    center[1] - dist_btw_eyes*self.xdir + dist_center*self.ydir)
+            loc2 = (center[0] - dist_btw_eyes*self.ydir + dist_center*self.xdir, 
+                    center[1] + dist_btw_eyes*self.xdir + dist_center*self.ydir)
+            pygame.draw.circle(surface, BLUE, loc1, radius)
+            pygame.draw.circle(surface, BLUE, loc2, radius)
 
 class Snake():
 
@@ -71,4 +86,8 @@ class Snake():
         self.body.append(cube)
 
     def draw(self, surface):
-        for c in self.body: c.draw(surface)
+        for c in self.body: 
+            if c == self.head:
+                c.draw(surface, True)
+            else:
+                c.draw(surface, False)
