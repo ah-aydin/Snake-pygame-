@@ -5,8 +5,9 @@ import random as rnd
 from tkinter import messagebox
 
 # Table variables
-size = 1000
-n_rows = 20
+top_offset = 50
+size = 450
+n_rows = 15
 dist = size // n_rows
 
 # Color variables
@@ -22,7 +23,7 @@ global has_snack
 
 pygame.init()
 
-window = pygame.display.set_mode((size, size))
+window = pygame.display.set_mode((size+1, size + top_offset+1))
 
 class Cube():
 
@@ -38,10 +39,10 @@ class Cube():
 
     def move(self):
         # Check borders
-        if self.pos[0] <= 0 and self.xdir == -1: self.pos = (size-dist, self.pos[1])
-        elif self.pos[0] >= size-dist and self.xdir == 1: self.pos = (0, self.pos[1])
-        elif self.pos[1] <= 0 and self.ydir == -1: self.pos = (self.pos[0], size-dist)
-        elif self.pos[1] >= size-dist and self.ydir == 1: self.pos = (self.pos[0], 0)
+        if self.pos[0] <= 0 and self.xdir == -1: self.pos = (size-dist, self.pos[1]) # X border left
+        elif self.pos[0] >= size-dist and self.xdir == 1: self.pos = (0, self.pos[1]) # X border right
+        elif self.pos[1] <= top_offset and self.ydir == -1: self.pos = (self.pos[0], size-dist+top_offset) # Y border top
+        elif self.pos[1] >= size-dist+top_offset and self.ydir == 1: self.pos = (self.pos[0], top_offset) # Y border bottom
         else: self.pos = (self.pos[0] + self.xdir * dist, self.pos[1] + self.ydir * dist)
 
     def draw(self, surface):
@@ -51,7 +52,7 @@ class Snake():
 
     rotations = {}
 
-    def __init__(self, pos=(dist * (n_rows // 2), dist * (n_rows // 2)), xdir=1, ydir=0, color=GREEN):
+    def __init__(self, pos=(0,0), xdir=1, ydir=0, color=GREEN):
         self.xdir = xdir
         self.ydir = ydir
         self.pos = pos
@@ -116,7 +117,8 @@ def spawn_snack(surface):
     while x == snake.pos[1] // n_rows:
         return
     y = rnd.randint(0, n_rows-1)
-    snack = Cube((x*dist,y*dist), 0, 0, RED)
+    snack_start_pos = (x*dist, y*dist + top_offset)
+    snack = Cube(snack_start_pos, 0, 0, RED)
 
 def draw_frame(surface):
     global snack
@@ -128,10 +130,10 @@ def draw_frame(surface):
 
 def draw_grid(surface):
     i = 0
-    for l in range(n_rows):
+    for l in range(n_rows+2):
+        pygame.draw.line(surface, WHITE, (i,top_offset), (i,size+top_offset))
+        pygame.draw.line(surface, WHITE, (0,i+top_offset), (size,i+top_offset))
         i += dist
-        pygame.draw.line(surface, WHITE, (i,0), (i,size))
-        pygame.draw.line(surface, WHITE, (0,i), (size,i))
 
 def check_input():
 
@@ -150,7 +152,7 @@ def main():
     global snake
     global has_snack
     has_snack = False
-    snake = Snake()
+    snake = Snake(pos=(dist * (n_rows // 2), dist * (n_rows // 2) + top_offset))
 
     clock = pygame.time.Clock()
 
