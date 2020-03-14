@@ -15,8 +15,8 @@ pygame.font.init()
 
 # Enviroment variables
 top_offset = 50
-size = 600
-n_rows = 20
+size = 900
+n_rows = 15
 dist = size // n_rows
 
 # Score related variables
@@ -96,7 +96,7 @@ def draw_frame(surface):
     global snack
     surface.fill(BLACK)
     snake.draw(surface)
-    snack.draw(surface)
+    snack.draw(surface, False)
     display_score()
     draw_grid(surface)
     pygame.display.update()
